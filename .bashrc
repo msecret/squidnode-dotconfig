@@ -8,15 +8,12 @@ alias grep='grep --color=auto'
 # default editor
 export EDITOR=vim
 export GREP_OPTIONS='--color=auto'
+export PATH=$PATH:/usr/bin/java
+export JAVA_HOME=/usr/bin/java
 
 # expand for aliases and vars
 shopt -s expand_aliases
 shopt -s cdable_vars
-
-# bash completion if there
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
-fi
 
 # handle all file extraction
 extract () {

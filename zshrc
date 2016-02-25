@@ -1,11 +1,11 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/msegreto/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="arrow"
+ZSH_THEME="msecret"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -57,6 +57,8 @@ plugins=(git git-extras git-flow colored-man colorize github virtualenv pip pyth
 
 source $ZSH/oh-my-zsh.sh
 
+source ~/.colorscheme/base16-default.dark.sh
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -94,7 +96,7 @@ alias lll=treeDir
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # added by travis gem
-[ -f /Users/msegreto/.travis/travis.sh ] && source /Users/msegreto/.travis/travis.sh
+[ -f $HOME/.travis/travis.sh ] && source $HOME/.travis/travis.sh
 
 ZSH_TMUX_AUTOSTART=true
 
@@ -107,10 +109,11 @@ export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:
 export PATH="$PATH:$HOME/.rvm/bin"
 
 export PATH="$PATH:$HOME/.nvm/bin"
-export NVM_DIR="/Users/msegreto/.nvm"
+export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-export PATH="$PATH:$HOME/go/bin"
+export GOPATH=~/Dev/go
+export PATH=$PATH:$GOPATH/bin
 export PATH="$PATH:/user/local/go/bin"
 
 # Text Editor
@@ -137,3 +140,116 @@ $(boot2docker shellinit 2> /dev/null)
 # Disable Tmux auto-titling of windows
 #
 export DISABLE_AUTO_TITLE=true
+
+
+autoload -U +X add-zsh-hook
+
+is-at-least 4.3.12 && __() {
+    MARKPATH=$ZSH/run/marks
+
+    _bookmark_directory_name() {
+        emulate -L zsh
+        setopt extendedglob
+        case $1 in
+            d)
+                # Turn the directory into a shortest name using
+                # bookmarks. We need to sort them by length of solved
+                # path.
+                local link slink
+                local -A links
+                local cache=$ZSH/run/bookmarks-$HOST-$UID
+                if [[ -f $cache ]] && [[ $MARKPATH -ot $cache ]]; then
+                    . $cache
+                else
+                    for link ($MARKPATH/*(N@)) links[${#link:A}$'\0'${link:A}]=${link:t}
+                    print -r "links=( ${(kv@)^^links} )" > $cache
+                fi
+                for slink (${(@On)${(k)links}}) {
+                    link=${slink#*$'\0'}
+                    if [[ $2 = (#b)(${link})(|/*) ]]; then
+                        typeset -ga reply
+                        reply=("@"${links[$slink]} $(( ${#match[1]} )) )
+                        return 0
+                    fi
+                }
+                return 1
+                ;;
+            n)
+                # Turn the name into a directory
+                [[ $2 != (#b)"@"(?*) ]] && return 1
+                typeset -ga reply
+                reply=(${${:-$MARKPATH/$match[1]}:A})
+                return 0
+                ;;
+            c)
+                # Completion
+                local expl
+                local -a dirs
+                dirs=($MARKPATH/*(N@:t))
+                dirs=("@"${^dirs})
+                vbe-remove-slash-after-bookmark () {
+                    case $KEYS in
+                        '/'|' '|$'\n'|$'\r')
+                            LBUFFER="${LBUFFER[0,-2]}"
+                            ;;
+                    esac
+                }
+                _wanted dynamic-dirs expl 'bookmarked directory' compadd -S\]/ -R vbe-remove-slash-after-bookmark -a dirs
+                return
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+        return 0
+    }
+
+    add-zsh-hook zsh_directory_name _bookmark_directory_name
+
+    vbe-insert-bookmark() {
+        emulate -L zsh
+        LBUFFER=${LBUFFER}"~[@"
+    }
+    zle -N vbe-insert-bookmark
+    bindkey '@@' vbe-insert-bookmark
+
+    # Manage bookmarks
+    bookmark() {
+        [[ -d $MARKPATH ]] || mkdir -p $MARKPATH
+        if (( $# == 0 )); then
+            # When no arguments are provided, just display existing
+            # bookmarks
+            for link in $MARKPATH/*(N@); do
+                local markname="$fg[green]${link:t}$reset_color"
+                local markpath="$fg[blue]${link:A}$reset_color"
+                printf "%-30s -> %s\n" $markname $markpath
+            done
+        else
+            # Otherwise, we may want to add a bookmark or delete an
+            # existing one.
+            local -a delete
+            zparseopts -D d=delete
+            if (( $+delete[1] )); then
+                # With `-d`, we delete an existing bookmark
+                command rm $MARKPATH/$1
+            else
+                # Otherwise, add a bookmark to the current
+                # directory. The first argument is the bookmark
+                # name. `.` is special and means the bookmark should
+                # be named after the current directory.
+                local name=$1
+                [[ $name == "." ]] && name=${PWD:t}
+                ln -s $PWD $MARKPATH/$name
+            fi
+            # Clean up the cache
+            command rm $ZSH/run/bookmarks-$HOST-$UID
+        fi
+    }
+} && __
+
+# bookmarks
+dev=$HOME/Dev
+cg=$dev/go/src/github.com/18F/cg-deck
+
+alias setclip='xclip -selection c'
+alias getclip='xclip -selection clipboard -o'

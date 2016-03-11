@@ -1,0 +1,1 @@
+/home/msecret/.oh-my-zsh/themes/msecret.zsh-theme

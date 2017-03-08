@@ -1,0 +1,6 @@
+
+source ~/.zplug/init.zsh
+
+
+zplug "dijitalmunky/nvm-auto"
+nvm_auto_switch

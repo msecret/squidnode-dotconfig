@@ -49,31 +49,15 @@ ZSH_THEME="msecret"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras git-flow colored-man colorize github virtualenv pip python brew osx docker gem zsh-syntax-highlighting extract npm osx tmux)
+plugins=(git git-extras git-flow colored-man colorize github virtualenv pip python brew osx docker gem zsh-syntax-highlighting extract npm osx tmux nvm-auto nvm-auto nvm-auto nvm-auto nvm-auto)
 
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
-
-source ~/.colorscheme/base16-default.dark.sh
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
+source $HOME/.zsh-env
+source $HOME/.zsh-plugins
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -86,6 +70,8 @@ alias ...='cd ../..'
 alias -- -='cd -'
 alias l='ls -amPF'
 alias ll='ls -al -GF'
+alias git-clean='git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d'
+
 treeDir() {
   tree -Clhcr --dirsfirst $@ | less
 }
@@ -95,52 +81,11 @@ alias lll=treeDir
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# added by travis gem
-[ -f $HOME/.travis/travis.sh ] && source $HOME/.travis/travis.sh
 
 ZSH_TMUX_AUTOSTART=true
 
 bindkey "^[[A" history-beginning-search-backward
 bindkey "^[[B" history-beginning-search-forward
-
-
-export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
-
-export PATH="$PATH:$HOME/.rvm/bin"
-
-export PATH="$PATH:$HOME/.nvm/bin"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-
-export GOPATH=~/Dev/go
-export PATH=$PATH:$GOPATH/bin
-export PATH="$PATH:/user/local/go/bin"
-
-# Text Editor
-#
-export EDITOR="vim"
-
-# Homebrew
-#
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-
-# Path for RVM
-#
-export PATH=$HOME/.rvm/bin:$PATH
-
-# Terminal
-#
-export TERM="xterm-256color"
-
-# Boot2Docker start and $VARIABLES export but be quiet about it.
-#
-# $(boot2docker up > /dev/null 2>&1) # Not needed in every shell, dude.
-$(boot2docker shellinit 2> /dev/null)
-
-# Disable Tmux auto-titling of windows
-#
-export DISABLE_AUTO_TITLE=true
-
 
 autoload -U +X add-zsh-hook
 
@@ -253,3 +198,5 @@ cg=$dev/go/src/github.com/18F/cg-deck
 
 alias setclip='xclip -selection c'
 alias getclip='xclip -selection clipboard -o'
+
+nvm use default

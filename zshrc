@@ -59,6 +59,9 @@ source $ZSH/oh-my-zsh.sh
 source $HOME/.zsh-env
 source $HOME/.zsh-plugins
 
+export LANG=en_US.UTF-8
+export ARCHFLAGS="-arch x86_64"
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -195,6 +198,9 @@ is-at-least 4.3.12 && __() {
 # bookmarks
 dev=$HOME/Dev
 cg=$dev/go/src/github.com/18F/cg-deck
+
+# Boot2Docker
+$(boot2docker shellinit 2> /dev/null)
 
 alias setclip='xclip -selection c'
 alias getclip='xclip -selection clipboard -o'

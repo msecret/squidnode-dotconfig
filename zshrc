@@ -205,4 +205,8 @@ $(boot2docker shellinit 2> /dev/null)
 alias setclip='xclip -selection c'
 alias getclip='xclip -selection clipboard -o'
 
+function diff {
+  colordiff -u "$@" | less -RF
+}
+
 nvm use default

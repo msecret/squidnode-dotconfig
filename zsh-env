@@ -8,7 +8,8 @@ export ARCHFLAGS="-arch x86_64"
 export EDITOR="vim"
 
 # Load color scheme
-source ~/.colorscheme/base16-default.dark.sh
+source ~/.colorscheme/base16-eighties.sh
+
 
 # ssh
 export SSH_KEY_PATH="~/.ssh/dsa_id"

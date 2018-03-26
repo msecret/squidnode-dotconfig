@@ -1,5 +1,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
+export EDITOR=/usr/local/bin/vim
+source $HOME/.bash_profile
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -49,7 +51,33 @@ ZSH_THEME="msecret"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras git-flow colored-man colorize github virtualenv pip python brew osx docker gem zsh-syntax-highlighting extract npm osx tmux nvm-auto nvm-auto nvm-auto nvm-auto nvm-auto)
+plugins=(
+  brew
+  bundler
+  colored-man
+  colorize
+  command-not-found
+  cp
+  docker
+  dotenv
+  extract
+  git
+  git-extras
+  github
+  gitignore
+  gpg-agent
+  jsontools
+  man
+  node
+  npm
+  nvm-auto
+  osx
+  rake
+  rbenv
+  ruby
+  yarn
+  zsh-syntax-highlighting
+)
 
 # User configuration
 
@@ -57,7 +85,6 @@ plugins=(git git-extras git-flow colored-man colorize github virtualenv pip pyth
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.zsh-env
-source $HOME/.zsh-plugins
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -71,6 +98,7 @@ alias -- -='cd -'
 alias l='ls -amPF'
 alias ll='ls -al -GF'
 alias git-clean='git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d'
+alias vim='/usr/local/bin/vim'
 
 treeDir() {
   tree -Clhcr --dirsfirst $@ | less
@@ -206,4 +234,15 @@ function diff {
   colordiff -u "$@" | less -RF
 }
 
+# --no-ignore: Do not respect .gitignore, etc...
+# --hidden: Search hidden files and folders
+# --follow: Follow symlinks
+# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+
 nvm use default
+
+# emoji-finder
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

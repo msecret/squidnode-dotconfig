@@ -5,11 +5,14 @@ export LANG=en_US.UTF-8
 export ARCHFLAGS="-arch x86_64"
 
 # Text Editor
-export EDITOR="vim"
+export VISUAL=nvim
+export EDITOR="$VISUAL"
 
 # Load color scheme
-source ~/.colorscheme/base16-eighties.sh
+# source ~/.colorscheme/base16-eighties.sh
 
+# FZF optinos
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
 
 # ssh
 export SSH_KEY_PATH="~/.ssh/dsa_id"
@@ -42,3 +45,4 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
+alias git-clean=git branch --merged | grep -v "\*" | xargs -n 1 git branch -d
